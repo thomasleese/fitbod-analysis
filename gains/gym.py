@@ -7,27 +7,27 @@ _Exercise = namedtuple('Exercise', ['date', 'name', 'muscle', 'sets'])
 
 
 class Muscle(Enum):
-    Abs = 'abs'
+    abs = 'abs'
 
-    Triceps = 'triceps'
-    Biceps = 'biceps'
-    Forearms = 'forearms'
+    triceps = 'triceps'
+    biceps = 'biceps'
+    forearms = 'forearms'
 
-    Chest = 'chest'
+    chest = 'chest'
 
-    UpperBack = 'upper back'
-    LowerBack = 'lower back'
-    Bum = 'bum'
+    upper_back = 'upper back'
+    lower_back = 'lower back'
+    bum = 'bum'
 
-    Shoulders = 'shoulders'
+    shoulders = 'shoulders'
 
-    Trapezius = 'trapezius'
+    trapezius = 'trapezius'
 
-    Quads = 'quads'
-    Hamstrings = 'hamstrings'
-    Calves = 'calves'
-    Abductors = 'abductors'
-    Adductors = 'adductors'
+    quads = 'quads'
+    hamstrings = 'hamstrings'
+    calves = 'calves'
+    abductors = 'abductors'
+    adductors = 'adductors'
 
 
 class Exercise(_Exercise):
@@ -48,4 +48,12 @@ class Exercise(_Exercise):
 class Analysis:
 
     def __init__(self, exercises):
-        self.exercises = exercises
+        self._exercises = exercises
+
+    def exercises(self, muscle=None):
+        results = self._exercises
+
+        if muscle is not None:
+            results = [e for e in results if e.muscle == muscle]
+
+        return results
