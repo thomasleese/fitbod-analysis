@@ -3,6 +3,7 @@ from unittest import TestCase
 
 from gains.loaders import FitbodLoader
 
+
 class TestFitbodLoader(TestCase):
 
     data_filename = Path(__file__).parent / "data.csv"
@@ -14,3 +15,4 @@ class TestFitbodLoader(TestCase):
         exercises = analysis.exercises
 
         self.assertEqual(len(exercises), 890)
+        self.assertEqual(exercises[3].average_weight, 38.5)

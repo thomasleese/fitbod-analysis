@@ -37,10 +37,12 @@ class FitbodLoader:
                 date = self._parse_date(date)
 
                 exercises.append(
-                    FitbodExercise(date, name, sets, reps, weight)
+                    FitbodExercise(
+                        date, name, int(sets), int(reps), float(weight)
+                    )
                 )
 
-        return sorted(exercises, key=lambda row: row.date)
+        return sorted(exercises, key=lambda row: (row.date, row.name))
 
     def _group_exercises(self, sorted_exercises):
         exercises = []
