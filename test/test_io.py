@@ -1,7 +1,7 @@
 from pathlib import Path
 from unittest import TestCase
 
-from gains.loaders import FitbodLoader
+from gains.io import FitbodLoader
 
 
 class TestFitbodLoader(TestCase):

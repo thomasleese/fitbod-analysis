@@ -34,7 +34,7 @@ class FitbodLoader:
         'Knee Raise': Muscle.abs,
         'Bird Dog': Muscle.abs,
         'Dead Bug': Muscle.abs,
-        'abs': Muscle.abs,
+        'Abs': Muscle.abs,
 
         'Tricep': Muscle.triceps,
         'Bench Dips': Muscle.triceps,
@@ -44,7 +44,7 @@ class FitbodLoader:
         'bell Wrist Curl': Muscle.forearms,
 
         'Cable Crossover Fly': Muscle.chest,
-        'chest': Muscle.chest,
+        'Chest': Muscle.chest,
         'Bench Press': Muscle.chest,
         'Machine Fly': Muscle.chest,
         'Push Up': Muscle.chest,
@@ -94,9 +94,15 @@ class FitbodLoader:
         'Thigh Adductor': Muscle.adductors,
     }
 
-    def __init__(self, filename):
-        self.filename = filename
-        self.exercises = self._group_exercises(self._load_exercises())
+    def __init__(self, file):
+        if isinstance(file, str):
+            with open(file) as f:
+                loaded_exercises = self._load_exercises(f)
+        else:
+            loaded_exercises = self._load_exercises(file)
+
+        self.exercises = self._group_exercises(loaded_exercises)
+
         self.analysis = Analysis(self.exercises)
 
     def _parse_date(self, date_string):
@@ -107,38 +113,37 @@ class FitbodLoader:
     def _find_muscle(self, name):
         results = []
 
-        for key in self.muscles.keys():
+        for key, muscle in self.muscles.items():
             if key in name:
-                return key
+                return muscle
 
-        for key in self.muscles.keys():
+        for key, muscle in self.muscles.items():
             matcher = SequenceMatcher(None, key, name)
             ratio = matcher.ratio()
             if ratio >= 0.75:
-                results.append((ratio, key))
+                results.append((ratio, muscle))
 
         if not results:
             raise ValueError(f"No matching muscles for: {name}")
 
         return sorted(results)[0][1]
 
-    def _load_exercises(self):
+    def _load_exercises(self, file):
         exercises = []
 
-        with open(self.filename) as file:
-            reader = csv.reader(file)
-            for date, name, sets, reps, weight, warmup, *_ in reader:
-                if warmup:
-                    continue
+        reader = csv.reader(file)
+        for date, name, sets, reps, weight, warmup, *_ in reader:
+            if warmup:
+                continue
 
-                date = self._parse_date(date)
-                muscle = self._find_muscle(name)
+            date = self._parse_date(date)
+            muscle = self._find_muscle(name)
 
-                exercises.append(
-                    FitbodExercise(
-                        date, name, muscle, int(sets), int(reps), float(weight)
-                    )
+            exercises.append(
+                FitbodExercise(
+                    date, name, muscle, int(sets), int(reps), float(weight)
                 )
+            )
 
         return sorted(exercises, key=lambda row: (row.date, row.name))
 
@@ -153,3 +158,27 @@ class FitbodLoader:
             exercises.append(Exercise(date, name, muscle, sets))
 
         return exercises
+
+
+class DictOutput:
+
+    def __init__(self, analysis):
+        self.dict = {
+            'analysis': {
+                'exercises': [self._exercise(e) for e in analysis.exercises()]
+            }
+        }
+
+    def _exercise(self, exercise):
+        return {
+            "date": exercise.date.isoformat(),
+            "name": exercise.name,
+            "muscle": exercise.muscle.value,
+            "sets": [self._set(s) for s in exercise.sets],
+        }
+
+    def _set(self, set):
+        return {
+            "reps": set.reps,
+            "weight": set.weight,
+        }
