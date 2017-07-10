@@ -180,3 +180,30 @@ class DictOutput:
             'reps': set.reps,
             'weight': set.weight,
         }
+
+
+class DictInput:
+
+    def __init__(self, data):
+        self.analysis = Analysis(self._load_exercises(data['exercises']))
+
+    def _load_exercises(self, data):
+        exercises = []
+
+        for record in data:
+            exercises.append(
+                Exercise(
+                    record['date'],
+                    record['name'],
+                    Muscle(record['muscle']),
+                    self._load_sets(record['sets']),
+                )
+            )
+
+        return exercises
+
+    def _load_sets(self, data):
+        return [self._load_set(record) for record in data]
+
+    def _load_set(self, data):
+        return Set(data['reps'], data['weight'])
