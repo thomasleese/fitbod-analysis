@@ -52,3 +52,9 @@ def analysis(slug):
 
     return render_template('analysis.html',
                            date=upload['date'], analysis=analysis)
+
+
+@app.route('/<slug>/json')
+def analysis_json(slug):
+    upload = app.database.uploads.find_one({'slug': slug})
+    return jsonify(**upload['analysis'])
