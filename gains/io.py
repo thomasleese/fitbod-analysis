@@ -15,7 +15,7 @@ FitbodExercise = namedtuple(
 
 class FitbodLoader:
 
-    date_format = "%a %b %d %Y %H:%M:%S %Z%z"
+    date_format = '%a %b %d %Y %H:%M:%S %Z%z'
 
     muscles = {
         'Crunch': Muscle.abs,
@@ -106,7 +106,7 @@ class FitbodLoader:
         self.analysis = Analysis(self.exercises)
 
     def _parse_date(self, date_string):
-        match = re.search(r"^([a-zA-Z0-9\+\:\s]+) \([A-Z]+\)$", date_string)
+        match = re.search(r'^([a-zA-Z0-9\+\:\s]+) \([A-Z]+\)$', date_string)
         date_string = match.group(1)
         return datetime.strptime(date_string, self.date_format)
 
@@ -124,7 +124,7 @@ class FitbodLoader:
                 results.append((ratio, muscle))
 
         if not results:
-            raise ValueError(f"No matching muscles for: {name}")
+            raise ValueError(f'No matching muscles for: {name}')
 
         return sorted(results)[0][1]
 
@@ -164,21 +164,19 @@ class DictOutput:
 
     def __init__(self, analysis):
         self.dict = {
-            'analysis': {
-                'exercises': [self._exercise(e) for e in analysis.exercises()]
-            }
+            'exercises': [self._exercise(e) for e in analysis.exercises()]
         }
 
     def _exercise(self, exercise):
         return {
-            "date": exercise.date.isoformat(),
-            "name": exercise.name,
-            "muscle": exercise.muscle.value,
-            "sets": [self._set(s) for s in exercise.sets],
+            'date': exercise.date.isoformat(),
+            'name': exercise.name,
+            'muscle': exercise.muscle.value,
+            'sets': [self._set(s) for s in exercise.sets],
         }
 
     def _set(self, set):
         return {
-            "reps": set.reps,
-            "weight": set.weight,
+            'reps': set.reps,
+            'weight': set.weight,
         }
