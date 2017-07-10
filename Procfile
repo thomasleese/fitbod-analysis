@@ -1,1 +1,1 @@
-web: python -m gains.web
+web: gunicorn gains.web:app
