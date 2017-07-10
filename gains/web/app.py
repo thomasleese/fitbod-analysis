@@ -1,3 +1,4 @@
+from datetime import datetime
 import io
 import os
 import random
@@ -8,6 +9,7 @@ from hashids import Hashids
 from pymongo import MongoClient
 
 from ..io import FitbodLoader, DictInput, DictOutput
+from ..gym import Muscle
 
 
 app = Flask('gains.web')
@@ -37,7 +39,7 @@ def upload():
     data = DictOutput(loader.analysis).dict
 
     slug = hashids.encode(random.randint(0, sys.maxsize))
-    record = {'analysis': data, 'slug': slug}
+    record = {'analysis': data, 'slug': slug, 'date': datetime.now()}
     app.database.uploads.insert_one(record)
 
     return redirect(url_for('.analysis', slug=slug))
@@ -48,6 +50,5 @@ def analysis(slug):
     upload = app.database.uploads.find_one({'slug': slug})
     analysis = DictInput(upload['analysis']).analysis
 
-    print(analysis)
-
-    return render_template('analysis.html')
+    return render_template('analysis.html',
+                           date=upload['date'], analysis=analysis)

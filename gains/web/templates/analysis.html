@@ -1,1 +1,21 @@
 {% extends '_includes/base.html' %}
+
+{% block body %}
+<div class="container top-gap">
+  <div class="row align-items-center">
+    <div class="col-2">
+      <h3 class="highlighted"><a href="{{ url_for('.home') }}">Gains</a></h3>
+    </div>
+
+    <div class="col-10">
+      <p class="lead mb-2"><strong>{{ date.strftime('%A %-d %B %Y %H:%M') }}</strong></p>
+    </div>
+  </div>
+
+  {% for muscle, chart in analysis.charts.items() %}
+    <h1 class="display-4 text-capitalize muscle-title">{{ muscle.value }}</h1>
+
+    {{ chart | safe }}
+  {% endfor %}
+</div>
+{% endblock %}

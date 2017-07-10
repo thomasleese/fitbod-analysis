@@ -1,5 +1,9 @@
 from collections import namedtuple
 from enum import Enum
+from itertools import groupby
+
+import plotly.offline as plotly
+import plotly.graph_objs as go
 
 
 Set = namedtuple('Set', ['reps', 'weight'])
@@ -17,7 +21,7 @@ class Muscle(Enum):
 
     upper_back = 'upper back'
     lower_back = 'lower back'
-    bum = 'bum'
+    glutes = 'glutes'
 
     shoulders = 'shoulders'
 
@@ -31,6 +35,10 @@ class Muscle(Enum):
 
 
 class Exercise(_Exercise):
+
+    @property
+    def body_weight(self):
+        return self.maximum_weight == 0
 
     @property
     def weights(self):
@@ -57,3 +65,41 @@ class Analysis:
             results = [e for e in results if e.muscle == muscle]
 
         return results
+
+    def chart(self, muscle):
+        muscle_exercises = self.exercises(muscle)
+
+        data = []
+
+        keyfunc = lambda e: e.name
+        sorted_exercises = sorted(muscle_exercises, key=keyfunc)
+        grouped_exercises = groupby(sorted_exercises, keyfunc)
+
+        for name, exercises in grouped_exercises:
+            exercises = list(exercises)
+
+            if any(e.body_weight for e in exercises):
+                continue
+
+            data.append(
+                go.Scatter(
+                    x=[e.date for e in exercises],
+                    y=[e.average_weight for e in exercises],
+                    name=name,
+                    mode='lines+markers',
+                )
+            )
+
+        layout = {
+            'yaxis': {'title': 'Weight (kg)'},
+        }
+
+        figure = {'data': data, 'layout': layout}
+
+        return plotly.plot(figure, output_type='div')
+
+    @property
+    def charts(self):
+        return {
+            muscle: self.chart(muscle) for muscle in Muscle
+        }

@@ -13,3 +13,22 @@ body {
   background: #2ecc71;
   padding: .5rem 1rem;
 }
+
+.highlighted a {
+  color: white;
+}
+
+.highlighted a:hover {
+  text-decoration: none;
+}
+
+.top-gap {
+  margin: 5rem auto;
+}
+
+.muscle-title {
+  border-bottom: 1px solid rgb(150, 150, 150);
+  margin-top: 5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+}
