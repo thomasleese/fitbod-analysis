@@ -1,4 +1,4 @@
-# Gains
+# Fitbod Analysis
 
 Gym gains measurement and analysis.
 
